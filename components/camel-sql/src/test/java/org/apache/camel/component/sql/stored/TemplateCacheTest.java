@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sql.stored;
 
+import java.io.IOException;
+
 import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -48,17 +50,17 @@ public class TemplateCacheTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldCacheTemplateFunctions() {
+    public void shouldCacheTemplateFunctions() throws IOException {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(db);
-        CallableStatementWrapperFactory fac
-                = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(context.getClassResolver()), false);
+        try (CallableStatementWrapperFactory fac
+                = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(context.getClassResolver()), false)) {
+            BatchCallableStatementCreatorFactory batchFactory1 = fac.getTemplateForBatch("FOO()");
+            BatchCallableStatementCreatorFactory batchFactory2 = fac.getTemplateForBatch("FOO()");
+            assertSame(batchFactory1, batchFactory2);
 
-        BatchCallableStatementCreatorFactory batchFactory1 = fac.getTemplateForBatch("FOO()");
-        BatchCallableStatementCreatorFactory batchFactory2 = fac.getTemplateForBatch("FOO()");
-        assertSame(batchFactory1, batchFactory2);
-
-        TemplateStoredProcedure templateStoredProcedure1 = fac.getTemplateStoredProcedure("FOO()");
-        TemplateStoredProcedure templateStoredProcedure2 = fac.getTemplateStoredProcedure("FOO()");
-        assertSame(templateStoredProcedure1, templateStoredProcedure2);
+            TemplateStoredProcedure templateStoredProcedure1 = fac.getTemplateStoredProcedure("FOO()");
+            TemplateStoredProcedure templateStoredProcedure2 = fac.getTemplateStoredProcedure("FOO()");
+            assertSame(templateStoredProcedure1, templateStoredProcedure2);
+        }
     }
 }

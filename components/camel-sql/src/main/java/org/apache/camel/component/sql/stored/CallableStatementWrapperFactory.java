@@ -36,9 +36,7 @@ public class CallableStatementWrapperFactory extends ServiceSupport {
     final TemplateParser templateParser;
     boolean function;
 
-    @SuppressWarnings("unchecked")
     private final Map<String, TemplateStoredProcedure> templateCache = LRUCacheFactory.newLRUCache(TEMPLATE_CACHE_DEFAULT_SIZE);
-    @SuppressWarnings("unchecked")
     private final Map<String, BatchCallableStatementCreatorFactory> batchTemplateCache
             = LRUCacheFactory.newLRUCache(BATCH_TEMPLATE_CACHE_DEFAULT_SIZE);
 
