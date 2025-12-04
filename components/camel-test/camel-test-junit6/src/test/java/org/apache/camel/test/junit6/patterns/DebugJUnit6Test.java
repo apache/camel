@@ -29,8 +29,6 @@ public class DebugJUnit6Test extends CamelTestSupport {
 
     @Override
     public void doPreSetup() throws Exception {
-        super.doPreSetup();
-
         camelContextConfiguration()
                 .withBreakpoint(createBreakpoint());
     }

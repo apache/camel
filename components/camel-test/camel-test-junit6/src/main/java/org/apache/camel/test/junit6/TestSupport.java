@@ -466,12 +466,13 @@ public final class TestSupport {
      * A helper method to create a list of Route objects for a given route builder.
      */
     public static List<Route> getRouteList(RouteBuilder builder) throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(builder);
-        context.start();
-        List<Route> answer = context.getRoutes();
-        context.stop();
-        return answer;
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(builder);
+            context.start();
+            List<Route> answer = context.getRoutes();
+            context.stop();
+            return answer;
+        }
     }
 
     /**
