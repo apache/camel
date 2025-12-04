@@ -43,9 +43,10 @@ public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
-        return queryParameters.containsKey("operation")
+        String answer = queryParameters.containsKey("operation")
                 ? queryParameters.get("operation")
                 : super.getOperationName(exchange, endpoint);
+        return clipMaxLength(answer);
     }
 
     @Override
