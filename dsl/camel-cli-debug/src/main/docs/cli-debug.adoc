@@ -1,0 +1,55 @@
+= CLI Debug Component
+:doctitle: CLI Debug
+:shortname: cli-debug
+:artifactid: camel-cli-debug
+:description: Remote CLI debugger
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: debug
+
+*Since Camel {since}*
+
+The camel-cli-debug enables Camel debugger for Camel CLI (camel-jbang).
+
+[IMPORTANT]
+====
+The camel-cli-debug is only for development purposes, it should **not** be used for production.
+
+Do not use both `camel-debug` and `camel-cli-debug` JARs in the Camel application classpath. Use only `camel-debug` JAR.
+====
+
+== Auto-detection from classpath
+
+To use this implementation all you need to do is to add the `camel-cli-debug` dependency to the classpath,
+and Camel should auto-detect this on startup and log as follows:
+
+[source,text]
+----
+Detected: camel-cli-debug JAR (Enabling Camel Debugging)
+----
+
+== Debugging
+
+Add `camel-cli-debug` JAR to the classpath of your application, and then run this application. For example with Spring Boot using `mvn spring-boot:run`.
+
+Then the application starts and Camel detects the CLI debugger that then logs a message, waiting for the CLI to remotely attach.
+
+From a CLI terminal then you can execute:
+
+[source,bash]
+----
+$ camel debug --remote-attach --name=<pid>
+----
+
+Where `<pid>` is the process id of the running Camel integration. You can see this from the log such as:
+
+[source,text]
+----
+2025-12-04T15:48:12.542+01:00  INFO 6667 --- [           main] o.a.c.impl.engine.AbstractCamelContext   : Detected: camel-cli-debug JAR (Enabling Camel Debugging)
+2025-12-04T15:48:12.543+01:00  INFO 6667 --- [           main] o.a.c.c.c.debug.CamelCliDebuggerFactory  : ================================================================================
+2025-12-04T15:48:12.543+01:00  INFO 6667 --- [           main] o.a.c.c.c.debug.CamelCliDebuggerFactory  : Waiting for CLI to remote attach (camel debug --remote-attach --name=6667)
+----
+
+To connect the CLI to the Camel application that will then continue to start and perform debugging from the CLI terminal.

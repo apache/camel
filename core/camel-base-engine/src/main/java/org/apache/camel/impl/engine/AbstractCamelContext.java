@@ -2506,6 +2506,18 @@ public abstract class AbstractCamelContext extends BaseService
 
         forceLazyInitialization();
 
+        // setup cli-connector if not already done (before debugger)
+        if (hasService(CliConnector.class) == null) {
+            CliConnectorFactory ccf = getCamelContextExtension().getContextPlugin(CliConnectorFactory.class);
+            if (ccf != null && ccf.isEnabled()) {
+                CliConnector connector = ccf.createConnector();
+                addService(connector, true);
+                // force start cli connector early as otherwise it will be deferred until context is started
+                // but, we want status available during startup phase
+                ServiceHelper.startService(connector);
+            }
+        }
+
         // auto-detect camel-debug on classpath (if debugger has not been explicit added)
         boolean debuggerDetected = false;
         if (getDebugger() == null && hasService(BacklogDebugger.class) == null) {
@@ -2528,17 +2540,6 @@ public abstract class AbstractCamelContext extends BaseService
                 // so install default debugger
                 BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(this);
                 addService(backlog, true, true);
-            }
-        }
-        // setup cli-connector if not already done (after debugger)
-        if (hasService(CliConnector.class) == null) {
-            CliConnectorFactory ccf = getCamelContextExtension().getContextPlugin(CliConnectorFactory.class);
-            if (ccf != null && ccf.isEnabled()) {
-                CliConnector connector = ccf.createConnector();
-                addService(connector, true);
-                // force start cli connector early as otherwise it will be deferred until context is started
-                // but, we want status available during startup phase
-                ServiceHelper.startService(connector);
             }
         }
 

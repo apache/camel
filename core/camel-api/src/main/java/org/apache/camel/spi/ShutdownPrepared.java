@@ -37,7 +37,7 @@ public interface ShutdownPrepared {
      * {@link ShutdownStrategy} performs a more aggressive shutdown, calling this method a second time with
      * <tt>true</tt> for the given forced parameter. For example by graceful stopping any threads or the likes.
      * <p/>
-     * In addition a service can also be suspended (not stopped), and when this happens the parameter
+     * In addition, a service can also be suspended (not stopped), and when this happens the parameter
      * <tt>suspendOnly</tt> has the value <tt>true</tt>. This can be used to prepare the service for suspension, such as
      * marking a worker thread to skip action.
      * <p/>
@@ -46,8 +46,8 @@ public interface ShutdownPrepared {
      *
      * @param suspendOnly <tt>true</tt> if the intention is to only suspend the service, and not stop/shutdown the
      *                    service.
-     * @param forced      <tt>true</tt> is forcing a more aggressive shutdown, <tt>false</tt> is for preparing to
-     *                    shutdown.
+     * @param forced      <tt>true</tt> is forcing a more aggressive shutdown, <tt>false</tt> is for preparing to shut
+     *                    down.
      */
     void prepareShutdown(boolean suspendOnly, boolean forced);
 

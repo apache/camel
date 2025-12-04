@@ -40,6 +40,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -63,6 +64,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
@@ -72,6 +74,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.support.LoadOnDemandReloadStrategy;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
@@ -101,6 +104,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
     private final CliConnectorFactory cliConnectorFactory;
     private CamelContext camelContext;
+    private ScheduledFuture scheduledFuture;
     private int delay = 1000;
     private long counter;
     private String platform;
@@ -192,10 +196,29 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             messageHistoryFile = createLockFile(lockFile.getName() + "-history.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             receiveFile = createLockFile(lockFile.getName() + "-receive.json");
-            executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
+            scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
             LOG.info("Camel JBang CLI enabled");
         } else {
             LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel JBang CLI.", getPid());
+        }
+    }
+
+    @Override
+    public void updateDelay(int delay) {
+        if (this.delay == delay) {
+            return;
+        }
+        if (scheduledFuture != null) {
+            try {
+                scheduledFuture.cancel(true);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        boolean done = scheduledFuture == null || scheduledFuture.isDone();
+        if (done) {
+            this.delay = delay;
+            scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -214,6 +237,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             public void run() {
                 LOG.info("Camel JBang terminating JVM");
                 try {
+                    // if we are debugging then detach before stopping camel
+                    BacklogDebugger debugger = camelContext.hasService(BacklogDebugger.class);
+                    if (debugger instanceof ShutdownPrepared sp) {
+                        sp.prepareShutdown(false, true);
+                    }
+                    ServiceHelper.stopAndShutdownServices(debugger);
                     camelContext.stop();
                 } finally {
                     ServiceHelper.stopAndShutdownService(this);
@@ -300,6 +329,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionBrowseTask(root);
             } else if ("receive".equals(action)) {
                 doActionReceiveTask(root);
+            } else if ("cli-debug".equals(action)) {
+                doActionCliDebug(root);
             }
         } catch (Exception e) {
             // ignore
@@ -309,6 +340,23 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         } finally {
             // action done so delete file
             FileUtil.deleteFile(actionFile);
+        }
+    }
+
+    private void doActionCliDebug(JsonObject root) {
+        String command = root.getString("command");
+        String breakpoint = root.getString("breakpoint");
+        BacklogDebugger debugger = camelContext.hasService(BacklogDebugger.class);
+        if (debugger != null) {
+            if ("attach".equals(command)) {
+                if (breakpoint != null) {
+                    debugger.setInitialBreakpoints(breakpoint);
+                }
+                debugger.enableDebugger();
+                debugger.attach();
+            } else if ("detach".equals(command)) {
+                debugger.detach();
+            }
         }
     }
 
