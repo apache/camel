@@ -9,13 +9,13 @@
 
 *Since Camel {since}*
 
-The `camel-test-main-junit5` module is used for unit testing Camel launched in Standalone mode with Camel Main.
+The `camel-test-main-junit6` module is used for unit testing Camel launched in Standalone mode with Camel Main.
 
 This module proposes two approaches to configure and launch Camel like a Camel Main application for testing purpose.
 
-* *Legacy*: This approach consists of extending the base class `org.apache.camel.test.main.junit5.CamelMainTestSupport` and overriding the appropriate methods to enable or disable a feature.
+* *Legacy*: This approach consists of extending the base class `org.apache.camel.test.main.junit6.CamelMainTestSupport` and overriding the appropriate methods to enable or disable a feature.
 
-* *Annotation*: This approach consists of annotating the test classes with `org.apache.camel.test.main.junit5.CamelMainTest` with the appropriate attributes to enable or disable a feature.
+* *Annotation*: This approach consists of annotating the test classes with `org.apache.camel.test.main.junit6.CamelMainTest` with the appropriate attributes to enable or disable a feature.
 
 In the next section,
 for each use case both approaches are proposed with the labels *legacy* and *annotation* to differentiate them.
@@ -26,7 +26,7 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 ----
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-test-main-junit5</artifactId>
+    <artifactId>camel-test-main-junit6</artifactId>
     <scope>test</scope>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
@@ -125,7 +125,7 @@ Annotation::
 [source,java]
 ----
 import org.apache.camel.main.MainConfigurationProperties;
-import org.apache.camel.test.main.junit5.Configure;
+import org.apache.camel.test.main.junit6.Configure;
 
 @CamelMainTest
 class SomeTest {
@@ -291,7 +291,7 @@ Annotation (field)::
 .Using a field
 [source,java]
 ----
-import org.apache.camel.test.main.junit5.ReplaceInRegistry;
+import org.apache.camel.test.main.junit6.ReplaceInRegistry;
 
 @CamelMainTest
 class SomeTest {
@@ -309,7 +309,7 @@ Annotation (method)::
 .Using a method
 [source,java]
 ----
-import org.apache.camel.test.main.junit5.ReplaceInRegistry;
+import org.apache.camel.test.main.junit6.ReplaceInRegistry;
 
 @CamelMainTest
 class SomeTest {
@@ -628,7 +628,7 @@ The methods `debugBefore` and `debugAfter` can then be overridden to execute som
 
 === Annotation ===
 
-The test class needs to implement the interface `org.apache.camel.test.main.junit5.DebuggerCallback` to enable the feature.
+The test class needs to implement the interface `org.apache.camel.test.main.junit6.DebuggerCallback` to enable the feature.
 The methods `debugBefore` and `debugAfter` can then be implemented to execute some specific code for debugging purpose.
 
 == Enable JMX
@@ -680,7 +680,7 @@ class SomeTest {
 
 == Nested tests
 
-The annotation-based approach supports natively https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested[Nested tests].
+The annotation-based approach supports natively https://junit.org/junit6/docs/current/user-guide/#writing-tests-nested[Nested tests].
 It is even possible to annotate `@Nested` test class
 with `@CamelMainTest` to change the configuration inherited from the outer class.
 However, please note that not all attributes can be set at nested test class level.
