@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "cli-debug",
+    "title": "CLI Debug",
+    "description": "Remote CLI debugger",
+    "deprecated": false,
+    "firstVersion": "4.17.0",
+    "label": "tooling",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cli-debug",
+    "version": "4.17.0-SNAPSHOT"
+  }
+}

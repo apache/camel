@@ -17,52 +17,41 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
+        <artifactId>dsl</artifactId>
         <version>4.17.0-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>dsl</artifactId>
-    <packaging>pom</packaging>
-
-    <name>Camel :: DSL :: Parent</name>
-    <description>Camel DSL Parent</description>
+    <artifactId>camel-cli-debug</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: DSL :: CLI Debug</name>
+    <description>Remote CLI debugger</description>
 
     <properties>
-        <camel.surefire.parallel>true</camel.surefire.parallel>
-        <camel-prepare-component>true</camel-prepare-component>
+        <firstVersion>4.17.0</firstVersion>
+        <title>CLI Debug</title>
+        <label>tooling</label>
     </properties>
 
-    <modules>
-        <module>camel-endpointdsl</module>
-        <module>camel-componentdsl</module>
-        <module>camel-cli-connector</module>
-        <module>camel-cli-debug</module>
-        <module>camel-dsl-support</module>
-        <module>camel-dsl-modeline</module>
-        <module>camel-endpointdsl-support</module>
-        <module>camel-java-joor-dsl</module>
-        <module>camel-xml-io-dsl</module>
-        <module>camel-xml-jaxb-dsl</module>
-        <module>camel-xml-jaxb-dsl-test</module>
-        <module>camel-yaml-dsl</module>
-        <module>camel-kamelet-main</module>
-        <module>camel-jbang</module>
-    </modules>
+    <dependencies>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cli-connector</artifactId>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
-                <configuration>
-                </configuration>
-
                 <executions>
                     <execution>
                         <id>generate</id>
@@ -81,23 +70,11 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>recompile</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>add-source</goal>
                             <goal>add-resource</goal>
@@ -117,4 +94,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

@@ -50,6 +50,7 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LoggerHelper;
@@ -63,7 +64,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class DefaultBacklogDebugger extends ServiceSupport implements BacklogDebugger {
+public final class DefaultBacklogDebugger extends ServiceSupport implements BacklogDebugger, ShutdownPrepared {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBacklogDebugger.class);
 
@@ -265,6 +266,15 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             logger.log("Waiting for a debugger to attach");
             suspendMessageProcessing();
         }
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        logger.log("Preparing debugger for shutdown");
+        // camel is being shutdown so if we are suspended during debugging
+        // then turn this off so messages can finish processing
+        suspendMode = false;
+        resumeMessageProcessing();
     }
 
     /**
